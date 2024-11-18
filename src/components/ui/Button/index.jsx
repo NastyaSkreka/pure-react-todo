@@ -1,8 +1,8 @@
 import React from "react";
 import { StyledButton } from "./styled.js";
 
-const FilterButton = ({ text, onClick }) => {
+const Button = ({ text, onClick }) => {
   return <StyledButton onClick={onClick}>{text}</StyledButton>;
 };
 
-export default FilterButton;
+export default Button;
