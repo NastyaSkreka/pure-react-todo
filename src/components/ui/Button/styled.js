@@ -8,12 +8,16 @@ export const StyledButton = styled.button `
   cursor: pointer;
   transition: background-color 0.3s, opacity 0.3s;
 
+  /* Динамічне задання кольору фону кнопки залежно від пропсів */
+
   background-color: ${({ variant, isActive }) => {
     if (variant === 'delete') return 'var(--color-button-delete)';
     if (variant === 'edit') return 'var(--color-button-edit)';
     return isActive ? 'var(--color-button-active)' : 'var(--color-button-background)';
   }};
   
+  /* Динамічне задання кольору тексту кнопки залежно від пропсів */
+
   color: ${({ variant, isActive }) => {
     if (variant === 'delete') return 'var(--color-delete-text)';
     if (variant === 'edit') return 'var(--color-edit-text)';
@@ -21,11 +25,13 @@ export const StyledButton = styled.button `
   }};
   
   opacity: ${({ isActive }) => (isActive ? 1 : 0.7)};
-  
+
+   /* Стиль при наведенні на кнопку */
+
   &:hover {
     opacity: 1;
   }
-  
+   /* Стиль при натисканні на кнопку */
   &:active {
     background-color: ${({ variant, isActive }) => {
       if (isActive) return 'var(--color-button-active)';
