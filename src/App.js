@@ -6,8 +6,8 @@ import Button from "./components/ui/Button";
 import { v4 as uuidv4 } from 'uuid';
 
 function App() {
-
   const [tasks, setTasks] = useState([]);
+  const [filter, setFilter] = useState('all');
 
   useEffect(() => {
     const storedTasks = localStorage.getItem('tasks');
@@ -35,16 +35,22 @@ function App() {
     setTasks(tasks.map(task => (task.id === id ? { ...task, isCompleted: !task.isCompleted } : task)));
   };
 
+  const filteredTasks = tasks.filter(task => {
+    if (filter === 'completed') return task.isCompleted;
+    if (filter === 'incomplete') return !task.isCompleted;
+    return true;
+  })
+
   return (
      <Container>
         <Title>To-Do App</Title>
         <ButtonsWrapper>
-         <Button  text="All"/>
-         <Button text="Completed"/>
-         <Button text="Incomplete"/>
+         <Button onClick={() => setFilter('all')} text="All"/>
+         <Button onClick={() => setFilter('completed')} text="Completed"/>
+         <Button onClick={() => setFilter('incomplete')}  text="Incomplete"/>
         </ButtonsWrapper>
         <BodyWrapper>
-        <TaskList tasks={tasks}
+        <TaskList tasks={filteredTasks}
            updateTask={updateTask}
            deleteTask={deleteTask}
            toggleTaskCompletion={toggleTaskCompletion}
