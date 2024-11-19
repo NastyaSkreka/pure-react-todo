@@ -1,7 +1,4 @@
-import React, {
-    useEffect,
-    useState
-} from "react";
+import React from "react";
 import TaskForm from "./components/TaskForm";
 import TaskList from "./components/TaskList";
 import {
@@ -11,80 +8,16 @@ import {
     BodyWrapper
 } from "./App.styled.js";
 import Button from "./components/ui/Button";
-import {
-    v4 as uuidv4
-} from "uuid";
+import useTaskStorage from "./hooks/useTaskStorage";
+import useTaskFilter from "./hooks/useTaskFilter";
+import useTaskActions from "./hooks/useTaskActions";
 
 function App() {
-    const [filter, setFilter] = useState("all");
-
-    const loadTasks = () => {
-        const storedTasks = localStorage.getItem("tasks");
-        return storedTasks ? JSON.parse(storedTasks) : [];
-    };
-
-    const saveTasksToLocalStorage = (tasks) => {
-        localStorage.setItem("tasks", JSON.stringify(tasks));
-    };
-
-    const [tasks, setTasks] = useState(loadTasks);
-
-    useEffect(() => {
-        saveTasksToLocalStorage(tasks);
-    }, [tasks]);
-
-
-    const addTask = (text) => {
-        const getCompletionStatus = () => {
-            switch (filter) {
-                case "completed":
-                    return true;
-                case "incomplete":
-                    return false;
-                default:
-                    return false;
-            }
-        };
-
-        const newTask = {
-            id: uuidv4(),
-            text,
-            isCompleted: getCompletionStatus(),
-        };
-
-        setTasks((prevTasks) => [...prevTasks, newTask]);
-    };
-
-
-    const updateTask = (id, newText) => {
-        setTasks(
-            tasks.map((task) => (task.id === id ? {
-                ...task,
-                text: newText
-            } : task))
-        );
-    };
-
-    const deleteTask = (id) => {
-        setTasks(tasks.filter((task) => task.id !== id));
-    };
-
-    const toggleTaskCompletion = (id) => {
-        setTasks(
-            tasks.map((task) =>
-                task.id === id ? {
-                    ...task,
-                    isCompleted: !task.isCompleted
-                } : task
-            )
-        );
-    };
-
-    const filteredTasks = tasks.filter((task) => {
-        if (filter === "completed") return task.isCompleted;
-        if (filter === "incomplete") return !task.isCompleted;
-        return true;
-    });
+    const [tasks, setTasks] = useTaskStorage(); 
+    const { filter, setFilter, filteredTasks } = useTaskFilter("all"); 
+    const { addTask, updateTask, deleteTask, toggleTaskCompletion } = useTaskActions(tasks, setTasks, filter); 
+  
+    const filteredTasksList = filteredTasks(tasks); 
 
     return ( <Container>
         <Title>To-Do App</Title>
@@ -107,7 +40,7 @@ function App() {
         </ButtonsWrapper>
         <BodyWrapper>
           <TaskList 
-            tasks={filteredTasks} 
+            tasks={filteredTasksList} 
             updateTask={updateTask} 
             deleteTask={deleteTask} 
             toggleTaskCompletion={toggleTaskCompletion} 
