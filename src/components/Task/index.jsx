@@ -12,7 +12,9 @@ function Task({ task, updateTask, toggleTaskCompletion, deleteTask }) {
   };
 
   const handleSave = () => {
-    updateTask(task.id, newText);
+    if (newText.trim() !== task.text) {
+      updateTask(task.id, newText);
+    }
     setIsEditing(false);
   };
 
@@ -29,9 +31,7 @@ function Task({ task, updateTask, toggleTaskCompletion, deleteTask }) {
           onBlur={handleSave}
         />
       ) : (
-        <TaskText isCompleted={task.isCompleted}>
-          {task.text}
-        </TaskText>
+        <TaskText isCompleted={task.isCompleted}>{task.text}</TaskText>
       )}
       {!task.isCompleted && (
         <Button
@@ -41,16 +41,19 @@ function Task({ task, updateTask, toggleTaskCompletion, deleteTask }) {
         />
       )}
       <ActionsContainer>
-      <Button
-        onClick={() => deleteTask(task.id)}
-        variant="delete"
-        text="Delete"
-      />
-      <input
-        type="checkbox"
-        checked={task.isCompleted}
-        onChange={handleCheckboxChange}
-      />
+        <Button
+          onClick={() => deleteTask(task.id)}
+          variant="delete"
+          text="Delete"
+        />
+         <input
+            type="checkbox"
+            checked={task.isCompleted}
+            onChange={handleCheckboxChange}
+            style={{
+                visibility: isEditing ? "hidden" : "visible", 
+              }}
+          />
       </ActionsContainer>
     </TaskContainer>
   );

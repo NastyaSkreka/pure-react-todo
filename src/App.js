@@ -1,64 +1,122 @@
-import React, { useEffect, useState } from "react";
+import React, {
+    useEffect,
+    useState
+} from "react";
 import TaskForm from "./components/TaskForm";
 import TaskList from "./components/TaskList";
-import {Container, Title, ButtonsWrapper, BodyWrapper} from './App.styled.js'
+import {
+    Container,
+    Title,
+    ButtonsWrapper,
+    BodyWrapper
+} from "./App.styled.js";
 import Button from "./components/ui/Button";
-import { v4 as uuidv4 } from 'uuid';
+import {
+    v4 as uuidv4
+} from "uuid";
 
 function App() {
-  const [tasks, setTasks] = useState([]);
-  const [filter, setFilter] = useState('all');
+    const [filter, setFilter] = useState("all");
 
-  useEffect(() => {
-    const storedTasks = localStorage.getItem('tasks');
-    if (storedTasks) setTasks(JSON.parse(storedTasks));
-  }, []);
+    const loadTasks = () => {
+        const storedTasks = localStorage.getItem("tasks");
+        return storedTasks ? JSON.parse(storedTasks) : [];
+    };
 
-  useEffect(() => {
-    localStorage.setItem('tasks', JSON.stringify(tasks));
-  }, [tasks]);
+    const saveTasksToLocalStorage = (tasks) => {
+        localStorage.setItem("tasks", JSON.stringify(tasks));
+    };
+
+    const [tasks, setTasks] = useState(loadTasks);
+
+    useEffect(() => {
+        saveTasksToLocalStorage(tasks);
+    }, [tasks]);
 
 
-  const addTask = (text) => {
-    setTasks([...tasks, {id: uuidv4(), text, isCompleted: false}])
-  }
-  
-  const updateTask = (id, newText) => {
-    setTasks(tasks.map(task => (task.id === id ? { ...task, text: newText } : task)));
-  };
+    const addTask = (text) => {
+        const getCompletionStatus = () => {
+            switch (filter) {
+                case "completed":
+                    return true;
+                case "incomplete":
+                    return false;
+                default:
+                    return false;
+            }
+        };
 
-  const deleteTask = (id) => {
-    setTasks(tasks.filter(task => task.id !== id));
-  };
+        const newTask = {
+            id: uuidv4(),
+            text,
+            isCompleted: getCompletionStatus(),
+        };
 
-  const toggleTaskCompletion = (id) => {
-    setTasks(tasks.map(task => (task.id === id ? { ...task, isCompleted: !task.isCompleted } : task)));
-  };
+        setTasks((prevTasks) => [...prevTasks, newTask]);
+    };
 
-  const filteredTasks = tasks.filter(task => {
-    if (filter === 'completed') return task.isCompleted;
-    if (filter === 'incomplete') return !task.isCompleted;
-    return true;
-  })
 
-  return (
-     <Container>
+    const updateTask = (id, newText) => {
+        setTasks(
+            tasks.map((task) => (task.id === id ? {
+                ...task,
+                text: newText
+            } : task))
+        );
+    };
+
+    const deleteTask = (id) => {
+        setTasks(tasks.filter((task) => task.id !== id));
+    };
+
+    const toggleTaskCompletion = (id) => {
+        setTasks(
+            tasks.map((task) =>
+                task.id === id ? {
+                    ...task,
+                    isCompleted: !task.isCompleted
+                } : task
+            )
+        );
+    };
+
+    const filteredTasks = tasks.filter((task) => {
+        if (filter === "completed") return task.isCompleted;
+        if (filter === "incomplete") return !task.isCompleted;
+        return true;
+    });
+
+    return ( <Container>
         <Title>To-Do App</Title>
         <ButtonsWrapper>
-         <Button onClick={() => setFilter('all')} text="All"/>
-         <Button onClick={() => setFilter('completed')} text="Completed"/>
-         <Button onClick={() => setFilter('incomplete')}  text="Incomplete"/>
+          <Button 
+            onClick={() => setFilter("all")} 
+            text="All" 
+            isActive={filter === "all"} 
+          />
+          <Button 
+            onClick={() => setFilter("completed")} 
+            text="Completed" 
+            isActive={filter === "completed"} 
+          />
+          <Button 
+            onClick={() => setFilter("incomplete")} 
+            text="Incomplete" 
+            isActive={filter === "incomplete"} 
+          />
         </ButtonsWrapper>
         <BodyWrapper>
-        <TaskList tasks={filteredTasks}
-           updateTask={updateTask}
-           deleteTask={deleteTask}
-           toggleTaskCompletion={toggleTaskCompletion}
-        />
-        <TaskForm addTask={addTask}/>
+          <TaskList 
+            tasks={filteredTasks} 
+            updateTask={updateTask} 
+            deleteTask={deleteTask} 
+            toggleTaskCompletion={toggleTaskCompletion} 
+          />
+          <TaskForm addTask={addTask} />
         </BodyWrapper>
-     </Container>
-  );
+      </Container>
+      
+    );
 }
 
 export default App;

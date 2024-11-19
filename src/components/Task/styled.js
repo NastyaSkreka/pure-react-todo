@@ -6,6 +6,8 @@ export const TaskContainer = styled.div`
  align-items: center;
  justify-content: space-between;
  width: 400px;
+ padding: 10px;
+ border: 1px solid var(--color-border);
 `
 
 export const TaskText = styled.div`
