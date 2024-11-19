@@ -1,6 +1,6 @@
 import { StyledInput } from "./styled.js";
 
-const Input = ({ type = "text", placeholder, value, onChange, name }) => {
+const Input = ({ type = "text",onBlur,  placeholder, value, onChange, name }) => {
   return (
     <StyledInput
       type={type}
@@ -8,6 +8,7 @@ const Input = ({ type = "text", placeholder, value, onChange, name }) => {
       value={value}
       onChange={onChange}
       name={name}
+      onBlur={onBlur}
     />
   );
 };

@@ -1,8 +1,20 @@
 import React from 'react';
+import Task from '../Task';
+import {TaskListContainer} from './styled.js'
 
-function TaskList() {
+function TaskList({tasks, updateTask, deleteTask, toggleTaskCompletion }) {
     return (
-       <>Task List Component</>
+       <TaskListContainer>
+          {tasks.map(task => (
+             <Task
+                key={task.id}
+                task={task}
+                updateTask={updateTask}
+                deleteTask={deleteTask}
+                toggleTaskCompletion={toggleTaskCompletion}
+             />
+          ))}
+       </TaskListContainer>
     );
   }
   
